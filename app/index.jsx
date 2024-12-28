@@ -5,9 +5,9 @@ import { Link } from 'expo-router';
 export default function App() {
   return (
     <View className="flex-1 items-center justify-center bg-white">
-      <Text className="text-2xl">Hello World! Introducing Shelf Surf!</Text>
+      <Text className="text-2xl font-pblack">Welcome to Shelf Surf!</Text>
       <StatusBar style="auto" />
-      <Link href="/profile" style={{ color: 'blue' }}>Go to Profile</Link>
+      <Link href="/myShelf" style={{ color: 'blue' }}>Continue</Link>
     </View>
   );
 }
