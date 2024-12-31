@@ -1,0 +1,12 @@
+specVersion: "v1beta"
+serviceId: "0515"
+location: "us-east1"
+schema:
+  source: "./schema"
+  datasource:
+    postgresql:
+      database: "shelfsurf"
+      cloudSql:
+        instanceId: "0515"
+      # schemaValidation: "COMPATIBLE"
+connectorDirs: ["./connector"]

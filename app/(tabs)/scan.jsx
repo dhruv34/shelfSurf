@@ -5,11 +5,12 @@ import { OpenAI, OpenAIApi } from "openai";
 import axios from "axios";
 import * as FileSystem from "expo-file-system";
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { initializeApp } from 'firebase/app';
 import { useAppContext } from './AppContext';
 import { useNavigation } from '@react-navigation/native';
 import { ActivityIndicator } from 'react-native';
 import { OPENAI_KEY, GOOGLE_KEY, FIREBASE_KEY } from "@env";
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { initializeApp, getApps, getApp } from 'firebase/app';
 
 
 const Scan = () => {
@@ -20,9 +21,10 @@ const Scan = () => {
     const { setResp } = useAppContext();
     const navigation = useNavigation();
     const [loading, setLoading] = useState(false);
+    const [keys, setKeys] = useState({});
 
     const firebaseConfig = {
-        apiKey: FIREBASE_KEY,
+        apiKey: keys.firebaseKey,
         authDomain: "shelfsurf-ccb51.firebaseapp.com",
         projectId: "shelfsurf-ccb51",
         storageBucket: "shelfsurf-ccb51.firebasestorage.app",
@@ -30,8 +32,28 @@ const Scan = () => {
         appId: "1:51443686872:web:66e05fab88a1e90f1d26ad",
         measurementId: "G-D2CYHYHZ3Z"
     };
-    const app = initializeApp(firebaseConfig);
+    const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+
     const storage = getStorage(app);
+
+    let openai;
+    
+    useEffect(() => {
+        const callFn = async () => {
+            const functions = getFunctions(app);
+            const getKeys = httpsCallable(functions, "getKeys");
+            try {
+                const resp = await getKeys(); 
+                console.log('AAAAA', resp.data);
+                setKeys(resp.data);
+            } catch (e) {
+                console.log(`Error! ${e}`);
+                setKeys('error');
+            }
+        }
+
+        callFn();
+    }, []);
 
     async function uploadImage(uri) {
         try {
@@ -50,9 +72,7 @@ const Scan = () => {
         }
     }
 
-    const openai = new OpenAI({
-        apiKey: OPENAI_KEY,
-    });
+    
 
 
     if (!permission) {
@@ -80,6 +100,10 @@ const Scan = () => {
         console.log('Pic being sent: ', capturedPhoto);
         const photoURL = await uploadImage(capturedPhoto);
         console.log('URL being sent: ', photoURL);
+
+        openai = new OpenAI({
+            apiKey: keys.openAIKey || '',
+        });
 
         try {
             const completion = await openai.chat.completions.create({

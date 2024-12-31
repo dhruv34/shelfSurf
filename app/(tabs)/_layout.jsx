@@ -27,6 +27,15 @@ const TabsLayout = () => {
           height: 78
         }
       }} >
+        <Tabs.Screen name="profile" 
+          options={{
+            title: "Profile",
+            headerShown: false,
+            tabBarIcon: ({ color, focused }) => (
+              <TabIcon icon={icons.profile} color={color} name="Profile" focused={focused} />
+            )
+          }}
+        />
         <Tabs.Screen name="myShelf" 
           options={{
             title: "My Shelf",
@@ -51,15 +60,6 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon icon={icons.bookmark} color={color} name="Bookmark" focused={focused} />
-            )
-          }}
-        />
-        <Tabs.Screen name="profile" 
-          options={{
-            title: "Profile",
-            headerShown: false,
-            tabBarIcon: ({ color, focused }) => (
-              <TabIcon icon={icons.profile} color={color} name="Profile" focused={focused} />
             )
           }}
         />
